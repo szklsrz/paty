@@ -1,0 +1,368 @@
+/* Complementos ao Tailwind (CDN). Regras sem camada vencem utilitários do Tailwind: não definir aqui
+   propriedades que o HTML já controla com classes utilitárias no mesmo elemento. */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+section[id],
+#resultado {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ---------- Idioma: mostra só os blocos do idioma ativo ---------- */
+html[data-lang="pt"] [lang="en"],
+html[data-lang="en"] [lang="pt-BR"] {
+  display: none !important;
+}
+
+/* ---------- Níveis da comparação (faixas P25/P50/P75) ---------- */
+:root {
+  --level-0: #94a3b8;
+  --level-1: #e8833a;
+  --level-2: #e3b341;
+  --level-3: #7cb342;
+  --level-4: #2f9a57;
+}
+
+[data-level="0"] { --level: var(--level-0); }
+[data-level="1"] { --level: var(--level-1); }
+[data-level="2"] { --level: var(--level-2); }
+[data-level="3"] { --level: var(--level-3); }
+[data-level="4"] { --level: var(--level-4); }
+
+/* ---------- Foco visível ---------- */
+:focus-visible {
+  outline: 3px solid var(--color-brand-500, #3a8b58);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible,
+.site-header:not(.is-scrolled):not(.is-open) :focus-visible {
+  outline-color: var(--color-accent-300, #d6f07a);
+}
+
+.field-input:focus-visible,
+.peer.sr-only:focus-visible {
+  outline: none;
+}
+
+.lang-btn {
+    cursor: pointer;
+}
+
+/* ---------- Cabeçalho ---------- */
+.site-header {
+  color: #fff;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header.is-scrolled,
+.site-header.is-open {
+  background-color: rgb(255 255 255 / 0.94);
+  color: var(--color-brand-950, #0b2116);
+  box-shadow: 0 12px 30px -18px rgb(11 33 22 / 0.35);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.site-header .nav-link {
+  opacity: 0.85;
+}
+
+.site-header .nav-link:hover {
+  opacity: 1;
+  background-color: rgb(255 255 255 / 0.12);
+}
+
+.site-header.is-scrolled .nav-link:hover,
+.site-header.is-open .nav-link:hover {
+  background-color: var(--color-brand-50, #f1f8f2);
+  color: var(--color-brand-700, #235a39);
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.lang-btn:hover {
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.lang-btn .fi {
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.menu-btn {
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.menu-btn[aria-expanded="true"] .icon-open,
+.menu-btn[aria-expanded="false"] .icon-close {
+  display: none;
+}
+
+/* ---------- Hero ---------- */
+.text-gradient {
+  background-image: linear-gradient(100deg, var(--color-accent-300, #d6f07a) 10%, #86efac 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.scroll-mouse {
+  display: flex;
+  justify-content: center;
+  width: 26px;
+  height: 42px;
+  padding-top: 8px;
+  border: 2px solid rgb(255 255 255 / 0.7);
+  border-radius: 999px;
+}
+
+.scroll-dot {
+  width: 4px;
+  height: 8px;
+  border-radius: 4px;
+  background: #fff;
+  animation: scroll-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-dot {
+  0% { transform: translateY(0); opacity: 1; }
+  75% { transform: translateY(14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* ---------- Animação de entrada ao rolar ---------- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  /* inclui translate/box-shadow para não anular o efeito de hover dos cards */
+  transition: opacity 0.7s ease, transform 0.7s ease, translate 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition-delay: var(--delay, 0ms), var(--delay, 0ms), 0ms, 0ms, 0ms;
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Selos de nível e de precisão ---------- */
+.level-badge,
+.precision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.level-badge {
+  border: 1px solid color-mix(in srgb, var(--level) 40%, #fff);
+  background: color-mix(in srgb, var(--level) 16%, #fff);
+  color: color-mix(in srgb, var(--level) 55%, #000);
+}
+
+.level-badge::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--level);
+}
+
+.precision-badge {
+  --tone: #64748b;
+  border: 1px solid color-mix(in srgb, var(--tone) 35%, #fff);
+  background: color-mix(in srgb, var(--tone) 10%, #fff);
+  color: color-mix(in srgb, var(--tone) 70%, #000);
+  font-weight: 600;
+}
+
+.precision-badge[data-precision="low"] { --tone: #e3902a; }
+.precision-badge[data-precision="exploratory"] { --tone: #0f766e; }
+.precision-badge:empty { display: none; }
+
+/* ---------- Barra de posição no grupo ---------- */
+.dist-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  height: 16px;
+  margin-top: 2.5rem;
+}
+
+.dist-zone {
+  border-radius: 4px;
+  opacity: 0.3;
+}
+
+.dist-zone:nth-child(1) { background: var(--level-1); border-radius: 999px 4px 4px 999px; }
+.dist-zone:nth-child(2) { background: var(--level-2); }
+.dist-zone:nth-child(3) { background: var(--level-3); }
+.dist-zone:nth-child(4) { background: var(--level-4); border-radius: 4px 999px 999px 4px; }
+
+.compare[data-level="1"] .dist-zone:nth-child(1),
+.compare[data-level="2"] .dist-zone:nth-child(2),
+.compare[data-level="3"] .dist-zone:nth-child(3),
+.compare[data-level="4"] .dist-zone:nth-child(4) {
+  opacity: 1;
+}
+
+.dist-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  border: 5px solid var(--color-brand-950, #0b2116);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(11 33 22 / 0.3);
+  transform: translate(-50%, -50%);
+  transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dist-marker-label {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--color-brand-950, #0b2116);
+  padding: 0.15rem 0.6rem;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dist-marker-label::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-brand-950, #0b2116);
+}
+
+.dist-ticks {
+  position: relative;
+  height: 1.75rem;
+  margin-top: 0.4rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dist-ticks span {
+  position: absolute;
+  top: 0;
+  padding-top: 0.45rem;
+  transform: translateX(-50%);
+}
+
+.dist-ticks span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 0.35rem;
+  background: #94a3b8;
+}
+
+.dist-ticks span:nth-child(1) { left: 25%; }
+.dist-ticks span:nth-child(2) { left: 50%; }
+.dist-ticks span:nth-child(3) { left: 75%; }
+
+.dist-legend {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.dist-legend li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.dist-legend li::before {
+  content: "";
+  position: absolute;
+  top: 0.5em;
+  left: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-brand-400, #5ca877);
+}
+
+/* ---------- Detalhes técnicos ---------- */
+.tech-list {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 0.4rem 1rem;
+  margin-top: 0.85rem;
+  font-size: 0.875rem;
+}
+
+.tech-list dt {
+  color: #64748b;
+}
+
+.tech-list dd {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ---------- Formulário ---------- */
+fieldset[data-invalid="true"] .choice {
+  border-color: #ef4444;
+}
+
+/* ---------- Cartões "Como entender seu resultado" ---------- */
+.zone-card {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-top: 4px solid var(--level);
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 0.05);
+  padding: 1.1rem 1.25rem;
+}
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .scroll-dot {
+    animation: none;
+  }
+
+  .dist-marker {
+    transition: none;
+  }
+}
