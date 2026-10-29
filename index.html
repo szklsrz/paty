@@ -386,6 +386,14 @@
                 <p id="err-steps" class="field-error" hidden></p>
               </div>
 
+              <div class="mt-6">
+                <label class="flex items-start gap-3 text-sm text-slate-700">
+                  <input id="consent" name="consent" type="checkbox" required class="mt-1 size-4 shrink-0 accent-brand-600" aria-describedby="err-consent">
+                  <span><span lang="pt-BR">Concordo em enviar meus dados.</span><span lang="en">I agree to send my details to Google Forms to record this response.</span></span>
+                </label>
+                <p id="err-consent" class="field-error" hidden></p>
+              </div>
+
               <details id="helper" class="group mt-4 rounded-2xl border border-dashed border-brand-300 bg-brand-50/60">
                 <summary class="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-semibold text-brand-800 [&amp;::-webkit-details-marker]:hidden">
                   <i data-lucide="calendar-days" class="size-5 shrink-0" aria-hidden="true"></i>
@@ -438,8 +446,8 @@
 
               <p class="mt-5 flex items-start gap-2 text-sm text-slate-500">
                 <i data-lucide="shield-check" class="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true"></i>
-                <span lang="pt-BR">Seus dados ficam só no seu aparelho. Nada é enviado ou guardado.</span>
-                <span lang="en">Your data stays on your device. Nothing is sent or stored.</span>
+                <span lang="pt-BR">Ao marcar o consentimento, idade, peso, altura, passos e sexo serão enviados ao Google Forms. Sem consentimento, nenhum dado será enviado.</span>
+                <span lang="en">If you agree, your age, weight, height, steps and sex will be sent to Google Forms. Without consent, no details will be sent.</span>
               </p>
 
               <noscript>
