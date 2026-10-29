@@ -103,6 +103,7 @@ const I18N = {
     },
     errors: {
       sex: 'Escolha uma das opções.',
+      consent: 'Marque a caixa para consentir com o envio dos dados.',
       ageEmpty: 'Digite sua idade em anos, só com números (ex.: 45).',
       ageMin: 'A calculadora é para adultos, a partir de 18 anos.',
       ageMax: 'Confira a idade: use um valor entre 18 e 120 anos.',
@@ -110,7 +111,9 @@ const I18N = {
       height: 'Digite sua altura entre 100 e 250 cm (ex.: 168).',
       steps: 'Digite sua média de passos por dia, de 0 a 100.000.',
     },
-    formIncomplete: 'Preencha os cinco campos para ver o resultado.',
+    formIncomplete: 'Preencha os campos obrigatórios e marque o consentimento para ver o resultado.',
+    sendError: 'Não foi possível enviar os dados. O resultado foi calculado, mas não enviado.',
+    sendUnconfirmed: 'Solicitação enviada; não é possível confirmar o recebimento.',
     helper: {
       empty: 'Digite os passos de pelo menos um dia.',
       avg: (n, v) => `Média de ${n} ${n === 1 ? 'dia' : 'dias'}: ${v} passos`,
@@ -201,6 +204,7 @@ const I18N = {
     },
     errors: {
       sex: 'Please choose one of the options.',
+      consent: 'Check the box to consent to sending your details to Google Forms.',
       ageEmpty: 'Enter your age in years, numbers only (e.g. 45).',
       ageMin: 'The calculator is for adults aged 18 or older.',
       ageMax: 'Check your age: use a value between 18 and 120.',
@@ -208,7 +212,9 @@ const I18N = {
       height: 'Enter your height between 100 and 250 cm (e.g. 168).',
       steps: 'Enter your average steps per day, from 0 to 100,000.',
     },
-    formIncomplete: 'Fill in the five fields to see your result.',
+    formIncomplete: 'Fill in the required fields and check the consent box to see your result.',
+    sendError: 'Could not send your details to Google Forms. The result was calculated but not sent.',
+    sendUnconfirmed: 'Request sent to Google Forms; receipt cannot be confirmed.',
     helper: {
       empty: 'Enter the steps for at least one day.',
       avg: (n, v) => `Average of ${n} ${n === 1 ? 'day' : 'days'}: ${v} steps`,
@@ -330,6 +336,7 @@ function fmt(value, digits = 0) {
 
 const form = $('#calc-form');
 const fields = { age: $('#age'), weight: $('#weight'), height: $('#height'), steps: $('#steps') };
+const consentCheckbox = $('#consent');
 const sexGroup = $('#sex-group');
 const formStatus = $('#form-status');
 const resultBox = $('#resultado');
@@ -354,6 +361,7 @@ function readForm() {
   const errors = {};
   const sex = form.elements.sex.value;
   if (sex !== 'M' && sex !== 'F') errors.sex = 'sex';
+  if (!consentCheckbox.checked) errors.consent = 'consent';
 
   const age = parseInteger(fields.age.value);
   if (Number.isNaN(age)) errors.age = 'ageEmpty';
@@ -384,6 +392,11 @@ function showErrors(errors) {
     if (name === 'sex') sexGroup.dataset.invalid = String(Boolean(key));
     else fields[name].setAttribute('aria-invalid', String(Boolean(key)));
   }
+  const consentError = errors.consent;
+  const consentErrorBox = $('#err-consent');
+  consentErrorBox.hidden = !consentError;
+  consentErrorBox.textContent = consentError ? messages[consentError] : '';
+  consentCheckbox.setAttribute('aria-invalid', String(Boolean(consentError)));
   const hasErrors = Object.keys(errors).length > 0;
   formStatus.hidden = !hasErrors;
   formStatus.textContent = hasErrors ? dict().formIncomplete : '';
@@ -401,19 +414,43 @@ function onSubmit(event) {
   const { values, errors } = readForm();
   showErrors(errors);
 
-  const firstInvalid = ['sex', 'age', 'weight', 'height', 'steps'].find((name) => errors[name]);
+  const firstInvalid = ['consent', 'sex', 'age', 'weight', 'height', 'steps'].find((name) => errors[name]);
   if (firstInvalid) {
     lastResult = null;
     resultBox.hidden = true;
-    (firstInvalid === 'sex' ? form.querySelector('input[name="sex"]') : fields[firstInvalid]).focus();
+    if (firstInvalid === 'consent') consentCheckbox.focus();
+    else (firstInvalid === 'sex' ? form.querySelector('input[name="sex"]') : fields[firstInvalid]).focus();
     return;
   }
 
   lastResult = calculate(values);
+  sendResults(values);
   renderResult(true);
   resultBox.hidden = false;
   resultBox.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
   resultTitle.focus({ preventScroll: true });
+}
+
+async function sendResults({ sex, age, weight, height, steps }) {
+  try {
+    await fetch('https://docs.google.com/forms/d/e/1FAIpQLSc2TtpBPyXP_j225_5WQweYkBXWeOJYxt9TkCTXfh8Jn5rYqg/formResponse', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: new URLSearchParams({
+        'entry.2021882982': String(age),
+        'entry.1369367563': String(weight),
+        'entry.531128076': String(height),
+        'entry.917155943': String(steps),
+        'entry.888947931': sex === 'M' ? 'Masculino' : 'Feminino',
+      }),
+    });
+    formStatus.hidden = false;
+    formStatus.textContent = dict().sendUnconfirmed;
+  } catch (error) {
+    console.error('Falha ao enviar os dados.', error);
+    formStatus.hidden = false;
+    formStatus.textContent = dict().sendError;
+  }
 }
 
 function onReset() {
@@ -694,6 +731,7 @@ form.addEventListener('submit', onSubmit);
 form.addEventListener('reset', onReset);
 Object.entries(fields).forEach(([name, input]) => input.addEventListener('input', () => clearFieldError(name)));
 $$('input[name="sex"]').forEach((radio) => radio.addEventListener('change', () => clearFieldError('sex')));
+consentCheckbox.addEventListener('change', () => clearFieldError('consent'));
 dayInputs.forEach((input) => input.addEventListener('input', updateHelper));
 helperUse.addEventListener('click', useHelperAverage);
 
